@@ -514,17 +514,26 @@ export const useWhisper: UseWhisperHook = (config) => {
       if (whisperConfig?.temperature) {
         body.append('temperature', `${whisperConfig.temperature}`)
       }
-      const headers: RawAxiosRequestHeaders = {}
-      headers['Content-Type'] = 'multipart/form-data'
-      if (apiKey) {
-        headers['Authorization'] = `Bearer ${apiKey}`
-      }
-      const { default: axios } = await import('axios')
-      axios.defaults.adapter = fetchAdapter
-      const response = await axios.post(whisperApiEndpoint + mode, body, {
-        headers,
+      const headers = apiKey
+        ? {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${apiKey}`,
+          }
+        : {
+            'Content-Type': 'multipart/form-data',
+          }
+
+      let response = await fetch(whisperApiEndpoint + mode, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: headers as HeadersInit,
       })
-      return response.data.text
+      // const { default: axios } = await import('axios')
+      // axios.defaults.adapter = fetchAdapter
+      // const response = await axios.post(whisperApiEndpoint + mode, body, {
+      //   headers,
+      // })
+      return response.json()
     },
     [apiKey, mode, whisperConfig]
   )
