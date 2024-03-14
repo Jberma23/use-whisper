@@ -16,6 +16,7 @@ import {
   UseWhisperTimeout,
   UseWhisperTranscript,
 } from './types'
+import fetchAdapter from '@vespaiach/axios-fetch-adapter'
 
 /**
  * default useWhisper configuration
@@ -519,6 +520,7 @@ export const useWhisper: UseWhisperHook = (config) => {
         headers['Authorization'] = `Bearer ${apiKey}`
       }
       const { default: axios } = await import('axios')
+      axios.defaults.adapter = fetchAdapter
       const response = await axios.post(whisperApiEndpoint + mode, body, {
         headers,
       })
